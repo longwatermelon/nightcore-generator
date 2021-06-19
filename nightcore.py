@@ -74,13 +74,13 @@ get_random_image()
 download_video("https://youtube.com" + url_suffix)
 
 nightcore = speedup_audio("audio.mp3")
-nightcore.export("nightcore.mp3", format="mp3")
+nightcore.export("fast.mp3", format="mp3")
 
-create_video("nightcore.mp3", "image.png", "final_video.mp4", 1)
+create_video("fast.mp3", "image.png", "nightcore.mp4", 1)
 
 os.remove("audio.mp3")
 os.remove("image.png")
-os.remove("nightcore.mp3")
+os.remove("fast.mp3")
 
-print("original url: https://youtube.com" + url_suffix)
+print("\n\noriginal url: https://youtube.com" + url_suffix)
 

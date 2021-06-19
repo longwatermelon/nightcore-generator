@@ -1,0 +1,6 @@
+youtube-dl==2021.6.6
+bs4==0.0.1
+pydub==0.25.1
+youtube-search==2.1.0
+beautifulsoup4==4.8.2
+moviepy==1.0.3
