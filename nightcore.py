@@ -92,16 +92,29 @@ def create_video(audio, image, output_name, fps):
 max_results = 10
 results = YoutubeSearch(sys.argv[1], max_results=max_results).to_json()
 videos = json.loads(results)["videos"]
-url_suffix = videos[random.randint(0, max_results - 1)]["url_suffix"]
+
+download_from_link = sys.argv[1].startswith("https://www.youtube.com/watch") or sys.argv[1].startswith("https://youtube.com/watch")
+url_suffix = ""
+
+if not download_from_link:
+    url_suffix = videos[random.randint(0, max_results - 1)]["url_suffix"]
 
 get_random_image()
 
 while True:
     try:
-        download_video("https://youtube.com" + url_suffix)
+        if download_from_link:
+            print("Downloading from url")
+            download_video(sys.argv[1])
+        else:
+            print("Not downloading from url")
+            download_video("https://youtube.com" + url_suffix)
+
         break
     except:
-        url_suffix = videos[random.randint(0, max_results - 1)]["url_suffix"]
+        if not download_from_link:
+            url_suffix = videos[random.randint(0, max_results - 1)]["url_suffix"]
+
         print("error downloading video, trying again...")
         continue
 
