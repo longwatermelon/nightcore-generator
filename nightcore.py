@@ -71,7 +71,13 @@ results = YoutubeSearch(sys.argv[1], max_results=max_results).to_json()
 url_suffix = json.loads(results)["videos"][random.randint(0, max_results - 1)]["url_suffix"]
 
 get_random_image()
-download_video("https://youtube.com" + url_suffix)
+
+try:
+    download_video("https://youtube.com" + url_suffix)
+except Exception as e:
+    print("error: " + e)
+    print("Try running the script again")
+    sys.exit(1)
 
 nightcore = speedup_audio("audio.mp3")
 nightcore.export("fast.mp3", format="mp3")
