@@ -74,6 +74,32 @@ def get_random_image():
             print("Retrying to find a better image aspect ratio...")
 
 
+def get_random_image_new():
+    global original_image_url
+
+    pid = random.randint(0, 6040)
+    url = f"https://safebooru.org/index.php?page=post&s=list&tags=width:1920+height:1080+1girl&pid={pid}"
+
+    data = requests.get(url).content
+    soup = BeautifulSoup(data, "html.parser")
+    thumbnails = list()
+    
+    content = soup.find(class_="content")
+    for anchor in content.find_all(class_="thumb"):
+        thumbnails.append(anchor)
+        
+    thumbnail = random.choice(thumbnails)
+    link = thumbnail.find("a")["href"]
+    actual_page = requests.get("https://safebooru.org/" + link).content
+    soup = BeautifulSoup(actual_page, "html.parser")
+    image = soup.find(id="image")
+
+    image_data = requests.get(image["src"], stream=True)
+
+    with open("image.png", "wb") as f:
+        shutil.copyfileobj(image_data.raw, f)
+
+
 def speedup_audio(path):
     sound = AudioSegment.from_file(path)
     new_sound = sound._spawn(sound.raw_data, overrides = {
@@ -104,7 +130,7 @@ url_suffix = ""
 if not download_from_link:
     url_suffix = videos[random.randint(0, max_results - 1)]["url_suffix"]
 
-get_random_image()
+get_random_image_new()
 
 while True:
     try:
