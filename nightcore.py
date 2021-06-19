@@ -37,11 +37,19 @@ def get_random_image():
 
     data = requests.get(url).content
     soup = BeautifulSoup(data, "html.parser")
-    image_tag = soup.find(id="image")
 
-    if not image_tag:
-        print("Couldn't find image, try again")
-        sys.exit(1)
+    while True:
+        image_tag = soup.find(id="image")
+
+        if image_tag:
+            break
+        else:
+            image_number = random.randint(0, 5000)
+            url = f"https://safebooru.org/index.php?page=post&s=view&id={image_number}"
+            data = requests.get(url).content
+            soup = BeautifulSoup(data, "html.parser")
+
+            print("trying to find an image...")
 
     image_url = image_tag['src']
     
@@ -68,16 +76,19 @@ def create_video(audio, image, output_name, fps):
 
 max_results = 10
 results = YoutubeSearch(sys.argv[1], max_results=max_results).to_json()
-url_suffix = json.loads(results)["videos"][random.randint(0, max_results - 1)]["url_suffix"]
+videos = json.loads(results)["videos"]
+url_suffix = videos[random.randint(0, max_results - 1)]["url_suffix"]
 
 get_random_image()
 
-try:
-    download_video("https://youtube.com" + url_suffix)
-except Exception as e:
-    print("error: " + e)
-    print("Try running the script again")
-    sys.exit(1)
+while True:
+    try:
+        download_video("https://youtube.com" + url_suffix)
+        break
+    except:
+        url_suffix = videos[random.randint(0, max_results - 1)]["url_suffix"]
+        print("error downloading video, trying again...")
+        continue
 
 nightcore = speedup_audio("audio.mp3")
 nightcore.export("fast.mp3", format="mp3")
