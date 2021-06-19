@@ -10,11 +10,14 @@ import sys
 from youtube_search import YoutubeSearch 
 import json
 import os
+from PIL import Image
 
 
 if len(sys.argv) < 2:
     print("You need to specify a search term")
     sys.exit(1)
+
+original_image_url = ""
 
 def download_video(url):
     ydl_opts = {
@@ -32,31 +35,43 @@ def download_video(url):
 
 
 def get_random_image():
-    image_number = random.randint(0, 5000)
-    url = f"https://safebooru.org/index.php?page=post&s=view&id={image_number}"
-
-    data = requests.get(url).content
-    soup = BeautifulSoup(data, "html.parser")
-
+    global original_image_url
     while True:
-        image_tag = soup.find(id="image")
+        image_number = random.randint(0, 5000)
+        url = f"https://safebooru.org/index.php?page=post&s=view&id={image_number}"
 
-        if image_tag:
+        data = requests.get(url).content
+        soup = BeautifulSoup(data, "html.parser")
+
+        while True:
+            image_tag = soup.find(id="image")
+
+            if image_tag:
+                break
+            else:
+                image_number = random.randint(0, 5000)
+                url = f"https://safebooru.org/index.php?page=post&s=view&id={image_number}"
+                data = requests.get(url).content
+                soup = BeautifulSoup(data, "html.parser")
+
+                print("Trying to find an image...")
+
+        image_url = image_tag['src']
+        
+        image_data = requests.get(image_url, stream=True)
+
+        with open("image.png", "wb") as f:
+            shutil.copyfileobj(image_data.raw, f) 
+
+        img = Image.open("image.png")
+        w, h = img.size
+
+        if w > h:
+            original_image_url = url
             break
         else:
-            image_number = random.randint(0, 5000)
-            url = f"https://safebooru.org/index.php?page=post&s=view&id={image_number}"
-            data = requests.get(url).content
-            soup = BeautifulSoup(data, "html.parser")
-
-            print("trying to find an image...")
-
-    image_url = image_tag['src']
-    
-    image_data = requests.get(image_url, stream=True)
-
-    with open("image.png", "wb") as f:
-        shutil.copyfileobj(image_data.raw, f) 
+            os.remove("image.png")
+            print("Retrying to find a better image aspect ratio...")
 
 
 def speedup_audio(path):
@@ -99,5 +114,6 @@ os.remove("audio.mp3")
 os.remove("image.png")
 os.remove("fast.mp3")
 
-print("\n\noriginal url: https://youtube.com" + url_suffix)
+print("\n\noriginal video url: https://youtube.com" + url_suffix)
+print("original image url: " + original_image_url)
 
