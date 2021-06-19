@@ -7,7 +7,14 @@ import shutil
 from pydub import AudioSegment
 import moviepy.editor as mpe
 import sys
+from youtube_search import YoutubeSearch 
+import json
+import os
 
+
+if len(sys.argv) < 2:
+    print("You need to specify a search term")
+    sys.exit(1)
 
 def download_video(url):
     ydl_opts = {
@@ -47,7 +54,7 @@ def get_random_image():
 def speedup_audio(path):
     sound = AudioSegment.from_file(path)
     new_sound = sound._spawn(sound.raw_data, overrides = {
-        "frame_rate": int(sound.frame_rate * 1.25)
+        "frame_rate": int(sound.frame_rate * 1.2)
     })
 
     return new_sound.set_frame_rate(sound.frame_rate)
@@ -59,11 +66,21 @@ def create_video(audio, image, output_name, fps):
     final_clip = clip.set_audio(background_audio)
     final_clip.write_videofile(output_name, fps=fps)
 
+max_results = 10
+results = YoutubeSearch(sys.argv[1], max_results=max_results).to_json()
+url_suffix = json.loads(results)["videos"][random.randint(0, max_results - 1)]["url_suffix"]
+
 get_random_image()
-download_video("https://www.youtube.com/watch?v=9lNZ_Rnr7Jc")
+download_video("https://youtube.com" + url_suffix)
 
 nightcore = speedup_audio("audio.mp3")
 nightcore.export("nightcore.mp3", format="mp3")
 
-create_video("audio.mp3", "image.png", "final_video.mp4", 1)
+create_video("nightcore.mp3", "image.png", "final_video.mp4", 1)
+
+os.remove("audio.mp3")
+os.remove("image.png")
+os.remove("nightcore.mp3")
+
+print("original url: https://youtube.com" + url_suffix)
 
