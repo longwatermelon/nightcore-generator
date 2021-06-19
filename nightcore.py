@@ -17,8 +17,6 @@ if len(sys.argv) < 2:
     print("You need to specify a search term")
     sys.exit(1)
 
-original_image_url = ""
-
 def download_video(url):
     ydl_opts = {
         "format": "bestaudio/best",
@@ -34,63 +32,20 @@ def download_video(url):
         ydl.download([url])
 
 
-def get_random_image():
-    global original_image_url
-    while True:
-        image_number = random.randint(0, 5000)
-        url = f"https://safebooru.org/index.php?page=post&s=view&id={image_number}"
-
-        data = requests.get(url).content
-        soup = BeautifulSoup(data, "html.parser")
-
-        while True:
-            image_tag = soup.find(id="image")
-
-            if image_tag:
-                break
-            else:
-                image_number = random.randint(0, 5000)
-                url = f"https://safebooru.org/index.php?page=post&s=view&id={image_number}"
-                data = requests.get(url).content
-                soup = BeautifulSoup(data, "html.parser")
-
-                print("Trying to find an image...")
-
-        image_url = image_tag['src']
-        
-        image_data = requests.get(image_url, stream=True)
-
-        with open("image.png", "wb") as f:
-            shutil.copyfileobj(image_data.raw, f) 
-
-        img = Image.open("image.png")
-        w, h = img.size
-
-        if w > h:
-            original_image_url = url
-            break
-        else:
-            os.remove("image.png")
-            print("Retrying to find a better image aspect ratio...")
-
-
 def get_random_image_new():
-    global original_image_url
-
     pid = random.randint(0, 6040)
     url = f"https://safebooru.org/index.php?page=post&s=list&tags=width:1920+height:1080+1girl&pid={pid}"
 
     data = requests.get(url).content
     soup = BeautifulSoup(data, "html.parser")
-    thumbnails = list()
     
     content = soup.find(class_="content")
-    for anchor in content.find_all(class_="thumb"):
-        thumbnails.append(anchor)
-        
+    thumbnails = content.find_all(class_="thumb")
     thumbnail = random.choice(thumbnails)
+
     link = thumbnail.find("a")["href"]
     actual_page = requests.get("https://safebooru.org/" + link).content
+
     soup = BeautifulSoup(actual_page, "html.parser")
     image = soup.find(id="image")
 
@@ -159,5 +114,4 @@ os.remove("image.png")
 os.remove("fast.mp3")
 
 print("\n\noriginal video url: https://youtube.com" + url_suffix)
-print("original image url: " + original_image_url)
 
