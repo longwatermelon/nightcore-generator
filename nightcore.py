@@ -11,6 +11,7 @@ from youtube_search import YoutubeSearch
 import json
 import os
 from PIL import Image
+import math
 
 
 if len(sys.argv) < 2:
@@ -92,6 +93,11 @@ def create_video(audio, image, output_name, fps):
 max_results = 10
 results = YoutubeSearch(sys.argv[1], max_results=max_results).to_json()
 videos = json.loads(results)["videos"]
+max_results = len(videos) - 1
+
+if max_results < 0:
+    print("Couldnt find any videos; try again")
+    sys.exit(1)
 
 download_from_link = sys.argv[1].startswith("https://www.youtube.com/watch") or sys.argv[1].startswith("https://youtube.com/watch")
 url_suffix = ""
