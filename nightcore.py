@@ -1,7 +1,6 @@
 from __future__ import unicode_literals
 import youtube_dl
 import requests
-from xml.etree import ElementTree
 import random
 from bs4 import BeautifulSoup
 import shutil
