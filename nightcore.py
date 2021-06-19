@@ -11,7 +11,6 @@ from youtube_search import YoutubeSearch
 import json
 import os
 from PIL import Image
-import math
 
 
 if len(sys.argv) < 2:
