@@ -69,9 +69,27 @@ def create_video(audio, image, output_name, fps):
     final_clip = clip.set_audio(background_audio)
     final_clip.write_videofile(output_name, fps=fps)
 
+def get_music_video_link(videos, max_results):
+    global download_from_link
+
+    if not download_from_link:
+        while True: 
+            index = random.randint(0, max_results - 1)
+            print(videos[index]["duration"])
+            
+            if len(videos[index]["duration"].split(':')) >= 3:
+                continue
+
+            if len(videos[index]["duration"].split(':')[0]) >= 2:
+                print("Looking for another video...")
+                continue
+
+            return videos[random.randint(0, max_results - 1)]["url_suffix"]
+
+
 print("\n\nSearching for " + sys.argv[1] + "\n\n")
 
-max_results = 10
+max_results = 20 
 results = YoutubeSearch(sys.argv[1], max_results=max_results).to_json()
 videos = json.loads(results)["videos"]
 max_results = len(videos) - 1
@@ -84,7 +102,7 @@ download_from_link = sys.argv[1].startswith("https://www.youtube.com/watch") or 
 url_suffix = ""
 
 if not download_from_link:
-    url_suffix = videos[random.randint(0, max_results - 1)]["url_suffix"]
+    url_suffix = get_music_video_link(videos, max_results) 
 
 get_random_image_new()
 
@@ -100,7 +118,7 @@ while True:
         break
     except:
         if not download_from_link:
-            url_suffix = videos[random.randint(0, max_results - 1)]["url_suffix"]
+            url_suffix = get_music_video_link(videos, max_results)
 
         print("error downloading video, trying again...")
         continue
