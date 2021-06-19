@@ -70,6 +70,8 @@ def create_video(audio, image, output_name, fps):
     final_clip = clip.set_audio(background_audio)
     final_clip.write_videofile(output_name, fps=fps)
 
+print("Searching for " + sys.argv[1])
+
 max_results = 10
 results = YoutubeSearch(sys.argv[1], max_results=max_results).to_json()
 videos = json.loads(results)["videos"]
