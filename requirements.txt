@@ -4,4 +4,4 @@ pydub==0.25.1
 youtube-search==2.1.0
 beautifulsoup4==4.8.2
 moviepy==1.0.3
-pillow=7.0.0
+pillow==7.0.0
