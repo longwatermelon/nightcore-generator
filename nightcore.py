@@ -83,8 +83,9 @@ def get_music_video_link(videos, max_results):
             if len(videos[index]["duration"].split(':')[0]) >= 2:
                 print("Looking for another video...")
                 continue
-
-            return videos[random.randint(0, max_results - 1)]["url_suffix"]
+            
+            print("found video below ten minutes with a duration of " + videos[index]["duration"])
+            return videos[index]["url_suffix"]
 
 
 print("\n\nSearching for " + sys.argv[1] + "\n\n")
@@ -102,7 +103,8 @@ download_from_link = sys.argv[1].startswith("https://www.youtube.com/watch") or 
 url_suffix = ""
 
 if not download_from_link:
-    url_suffix = get_music_video_link(videos, max_results) 
+    url_suffix = get_music_video_link(videos, max_results)
+    print("found video: https://youtube.com" + url_suffix)
 
 get_random_image_new()
 
