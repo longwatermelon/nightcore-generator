@@ -95,16 +95,19 @@ def get_music_video_link(videos, max_results):
 
 print("\n\nSearching for " + sys.argv[1] + "\n\n")
 
+download_from_link = sys.argv[1].startswith("https://www.youtube.com/watch") or sys.argv[1].startswith("https://youtube.com/watch")
+
 max_results = 20 
 results = YoutubeSearch(sys.argv[1], max_results=max_results).to_json()
 videos = json.loads(results)["videos"]
 max_results = len(videos) - 1
 
 if max_results < 0:
-    print("Couldnt find any videos; try again")
-    sys.exit(1)
+    if not download_from_link:
+        print("Couldnt find any videos; try again")
+        sys.exit(1)
 
-download_from_link = sys.argv[1].startswith("https://www.youtube.com/watch") or sys.argv[1].startswith("https://youtube.com/watch")
+
 url_suffix = ""
 
 if not download_from_link:
