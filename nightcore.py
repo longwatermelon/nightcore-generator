@@ -32,8 +32,13 @@ def download_video(url):
 
 
 def get_random_image_new():
-    pid = random.randint(0, 6040)
-    url = f"https://safebooru.org/index.php?page=post&s=list&tags=width:1920+height:1080+1girl&pid={pid}"
+    tag = random.choice(["1girl", "2girls", "looking_at_another", "vocaloid"])
+    url = f"https://safebooru.org/index.php?page=post&s=list&tags=width:1920+height:1080+{tag}"
+    page = requests.get(url).content
+
+    soup = BeautifulSoup(page, "html.parser")
+    last = soup.find(alt="last page")
+    url = "https://safebooru.org/index.php" + last["href"]
 
     data = requests.get(url).content
     soup = BeautifulSoup(data, "html.parser")
