@@ -32,7 +32,7 @@ def download_video(url):
 
 
 def get_random_image_new():
-    tag = random.choice(["1girl", "2girls", "1girl", "2girl", "looking_at_another", "vocaloid"])
+    tag = random.choice(["1girl", "2girls", "1girl", "2girls", "looking_at_another", "vocaloid"])
     url = f"https://safebooru.org/index.php?page=post&s=list&tags=width:1920+height:1080+{tag}"
     page = requests.get(url).content
 
